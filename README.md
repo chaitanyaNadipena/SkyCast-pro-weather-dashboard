@@ -8,7 +8,7 @@ A modern, responsive, and interactive weather dashboard built using **HTML, CSS,
 
 ## 🚀 Live Demo
 
-🔗 Coming Soon
+🔗 https://chaitanyanadipena.github.io/SkyCast-pro-weather-dashboard/
 
 ---
 
