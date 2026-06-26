@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkyCast Pro - Weather Dashboard</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <!-- =========================
+         TOP HEADER
+    ========================== -->
+    <header class="top-header glass-card">
+      <div class="brand-wrap">
+        <div class="brand-icon">
+          <i class="fa-solid fa-sun"></i>
+        </div>
+
+        <div class="brand-text">
+          <p class="section-label">WEATHER INTELLIGENCE</p>
+          <h1>SkyCast Pro</h1>
+        </div>
+      </div>
+
+      <div class="date-badge" id="currentDateBadge">Thu, Jun 25, 2026</div>
+    </header>
+
+    <!-- =========================
+         HERO / SEARCH SECTION
+    ========================== -->
+    <section class="hero-section glass-card">
+      <div class="hero-left">
+        <p class="section-label">LIVE WEATHER DASHBOARD</p>
+        <h2>Track Weather Conditions Anywhere</h2>
+        <p class="hero-description">
+          Real-time weather insights, atmospheric conditions, temperature trends and
+          interactive location tracking.
+        </p>
+
+        <div class="quick-cities-row">
+          <span class="quick-cities-label">Quick Cities:</span>
+
+          <div class="quick-cities-list">
+            <button class="quick-city-btn" data-city="Hyderabad">Hyderabad</button>
+            <button class="quick-city-btn" data-city="Delhi">Delhi</button>
+            <button class="quick-city-btn" data-city="Bengaluru">Bengaluru</button>
+            <button class="quick-city-btn" data-city="London">London</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <form id="weatherForm" class="search-panel">
+          <div class="search-row">
+            <input
+              type="text"
+              id="cityInput"
+              placeholder="Enter city name"
+              value="Hyderabad"
+              autocomplete="off"
+            />
+            <button type="submit" id="searchBtn">Search Weather</button>
+          </div>
+
+          <p class="search-note">
+            <span class="note-dot"></span>
+            Powered by OpenWeather API
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <!-- =========================
+         MAIN WEATHER SECTION
+    ========================== -->
+    <section class="dashboard-grid">
+      <!-- LEFT: MAIN WEATHER CARD -->
+      <div class="weather-main-card glass-card" id="weatherMainPanel">
+        <!-- Loading State -->
+        <div id="loadingState" class="state-box hidden">
+          <div class="loader"></div>
+          <p>Loading weather details...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="state-box hidden">
+          <div class="error-icon">
+            <i class="fa-solid fa-circle-exclamation"></i>
+          </div>
+          <p id="errorMessage">Something went wrong while fetching weather data.</p>
+        </div>
+
+        <!-- Weather Content -->
+        <div id="weatherContent">
+          <div class="weather-main-top">
+            <div class="location-block">
+              <div class="location-line">
+                <h2 id="cityName">Hyderabad</h2>
+                <span class="country-pill" id="countryName">IN</span>
+              </div>
+
+              <div class="condition-row">
+                <img id="weatherIcon" src="" alt="Weather Icon" />
+                <div>
+                  <h3 id="weatherCondition">Clouds</h3>
+                  <p id="weatherDescription">Overcast Clouds</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="temperature-block">
+              <div class="temp-number">
+                <span id="temperature">29</span><sup>°C</sup>
+              </div>
+              <p class="feels-like-text">
+                Feels like <span id="feelsLike">31°C</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="weather-main-bottom">
+            <div class="weather-meta">
+              <div class="meta-chip">
+                <span class="meta-label">Updated</span>
+                <span id="updatedTime">09:41 AM</span>
+              </div>
+
+              <div class="meta-chip status-chip">
+                <span class="meta-label">Status</span>
+                <span id="weatherStatusBadge">Stable</span>
+              </div>
+            </div>
+
+            <div class="insight-panel">
+  <p class="section-label insight-label">Weather Summary</p>
+  <h4 id="visualTitle">Current Weather Summary</h4>
+  <p id="weatherInsight">
+    Current weather in Hyderabad is stable with 29°C, moderate humidity,
+    and comfortable wind conditions.
+  </p>
+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: WEATHER DETAIL CARDS -->
+      <div class="weather-side-grid">
+        <div class="detail-card glass-card">
+          <p class="detail-label">Humidity</p>
+          <h3 id="humidity">45%</h3>
+        </div>
+
+        <div class="detail-card glass-card">
+          <p class="detail-label">Pressure</p>
+          <h3 id="pressure">1007 hPa</h3>
+        </div>
+
+        <div class="detail-card glass-card">
+          <p class="detail-label">Wind Speed</p>
+          <h3 id="windSpeed">10 km/h</h3>
+        </div>
+
+        <div class="detail-card glass-card">
+          <p class="detail-label">Visibility</p>
+          <h3 id="visibility">6.0 km</h3>
+        </div>
+
+        <div class="detail-card glass-card">
+          <p class="detail-label">Sunrise</p>
+          <h3 id="sunrise">05:42 AM</h3>
+        </div>
+
+        <div class="detail-card glass-card">
+          <p class="detail-label">Feels Like</p>
+          <h3 id="tempMax">32°C</h3>
+          <p class="detail-subtext">Max Temp</p>
+          <div class="hidden-value" id="tempMin">27°C</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         MAP + LOCATION SECTION
+    ========================== -->
+    <section class="map-section-grid">
+      <!-- MAP -->
+      <div class="map-card glass-card">
+        <div class="section-heading-row">
+          <div>
+            <p class="section-label">INTERACTIVE WEATHER MAP</p>
+            <h3>Explore Live Conditions by Location</h3>
+          </div>
+        </div>
+
+        <p class="section-support-text">
+          Click any point on the map to view real-time weather data for that location.
+        </p>
+
+        <div id="weatherMap"></div>
+      </div>
+
+      <!-- SELECTED LOCATION DETAILS -->
+      <div class="location-card glass-card">
+        <div class="section-heading-row">
+          <div>
+            <p class="section-label">SELECTED LOCATION</p>
+            <h3 id="mapPlaceName">Hyderabad, IN</h3>
+          </div>
+        </div>
+
+        <p class="location-subtext" id="mapPlaceSubtext">
+          Clouds • Overcast clouds
+        </p>
+
+        <div class="location-stats-grid">
+          <div class="location-stat">
+            <span class="location-stat-label">Latitude</span>
+            <strong id="mapLat">17.385° N</strong>
+          </div>
+        
+
+          <div class="location-stat">
+            <span class="location-stat-label">Longitude</span>
+            <strong id="mapLon">78.486° E</strong>
+          </div>
+
+          <div class="location-stat">
+            <span class="location-stat-label">Temperature</span>
+            <strong id="mapTemp">29°C</strong>
+          </div>
+
+          <div class="location-stat">
+            <span class="location-stat-label">Condition</span>
+            <strong id="mapCondition">Clouds</strong>
+          </div>
+
+          <div class="location-stat">
+            <span class="location-stat-label">Humidity</span>
+            <strong id="mapHumidity">45%</strong>
+          </div>
+
+          <div class="location-stat">
+            <span class="location-stat-label">Wind</span>
+            <strong id="mapWind">10 km/h</strong>
+          </div>
+          </div>
+          <div class="today-outlook">
+    <p class="section-label">TODAY'S OUTLOOK</p>
+    <p id="todayOutlook">
+        Pleasant weather with comfortable conditions throughout the day.
+    </p>
+</div>
+        
+      </div>
+    </section>
+
+    <!-- =========================
+         PROFESSIONAL BOTTOM SECTION
+    ========================== -->
+    <section class="footer-dashboard-grid">
+      <!-- DEVELOPER -->
+      <div class="footer-card glass-card">
+        <p class="section-label">DEVELOPER</p>
+        <h3>Chaitanya Nadipena</h3>
+        <p class="footer-card-text">
+          Frontend developer focused on building polished, responsive and user-friendly
+          web interfaces with modern UI design, API integration and interactive user experiences.
+        </p>
+
+        <div class="developer-meta">
+          <div class="developer-badge">
+            <span class="dev-badge-label">Role</span>
+            <strong>Frontend Developer</strong>
+          </div>
+
+          <div class="developer-badge">
+            <span class="dev-badge-label">Project</span>
+            <strong>SkyCast Pro Weather Dashboard</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONNECT -->
+      <div class="footer-card glass-card">
+        <p class="section-label">CONNECT</p>
+        <h3>Professional Links</h3>
+        <p class="footer-card-text">
+          Explore my development work, project repository and professional profile
+          through the links below.
+        </p>
+
+        <div class="connect-links">
+          <a
+            href="https://github.com/chaitanyaNadipena"
+            class="connect-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fa-brands fa-github"></i>
+            <span>Visit GitHub</span>
+          </a>
+
+          <a
+            href="https://www.linkedin.com/in/nadipena-chaitanya-585892417/"
+            class="connect-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fa-brands fa-linkedin-in"></i>
+            <span>View LinkedIn</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- RATE THIS APP -->
+      <div class="footer-card glass-card">
+        <p class="section-label">RATE THIS APP</p>
+        <h3>Share Your Feedback</h3>
+        <p class="footer-card-text">
+          Your feedback helps improve the overall experience, design quality and
+          usability of this weather dashboard project.
+        </p>
+
+        <div class="rating-stars">
+          <button class="star-btn" data-rate="1" aria-label="Rate 1 star">
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <button class="star-btn" data-rate="2" aria-label="Rate 2 stars">
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <button class="star-btn" data-rate="3" aria-label="Rate 3 stars">
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <button class="star-btn" data-rate="4" aria-label="Rate 4 stars">
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <button class="star-btn" data-rate="5" aria-label="Rate 5 stars">
+            <i class="fa-solid fa-star"></i>
+          </button>
+        </div>
+
+        <p id="ratingMessage" class="rating-message">
+          Rate your experience with SkyCast Pro.
+        </p>
+      </div>
+    </section>
+
+    <!-- FOOTER COPYRIGHT -->
+    <footer class="copyright-footer">
+      <p>© 2026 SkyCastPro. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <!-- Main JS -->
+  <script src="script.js"></script>
+</body>
+</html>
